@@ -17,6 +17,14 @@ defmodule MyAppWeb.ConnCase do
 
   use ExUnit.CaseTemplate
 
+  @default_opts [
+    store: :cookie,
+    key: "_my_app_key",
+    signing_salt: "09ApxCiB"
+  ]
+
+  @signing_opts Plug.Session.init(Keyword.put(@default_opts, :encrypt, false))
+
   using do
     quote do
       # Import conveniences for testing with connections
@@ -38,6 +46,52 @@ defmodule MyAppWeb.ConnCase do
       Ecto.Adapters.SQL.Sandbox.mode(MyApp.Repo, {:shared, self()})
     end
 
-    {:ok, conn: Phoenix.ConnTest.build_conn()}
+    metadata =
+      case tags[:authenticated] do
+        user when user == :user or user == true ->
+          user = %MyApp.User{
+            id: "peters_uuid",
+            email: "peter@example.com",
+            password_digest: "aasdfasdfasdfsdfsdf"
+          }
+
+          authed_session =
+            Phoenix.ConnTest.build_conn()
+            |> Plug.Session.call(@signing_opts)
+            |> Plug.Conn.fetch_session()
+            |> MyAppWeb.Guardian.Plug.sign_in(user)
+            |> Plug.Conn.get_session()
+
+          conn =
+            Phoenix.ConnTest.build_conn()
+            |> Phoenix.ConnTest.init_test_session(authed_session)
+
+          [conn: conn, user: user]
+
+        :admin ->
+          user = %MyApp.User{
+            id: "peters_uuid",
+            email: "admin@example.com",
+            password_digest: "aasdfasdfasdfsdfsdf"
+          }
+
+          authed_session =
+            Phoenix.ConnTest.build_conn()
+            |> Plug.Session.call(@signing_opts)
+            |> Plug.Conn.fetch_session()
+            |> MyAppWeb.Guardian.Plug.sign_in(user, %{"roles" => ["admin"]})
+            |> Plug.Conn.get_session()
+
+          conn =
+            Phoenix.ConnTest.build_conn()
+            |> Phoenix.ConnTest.init_test_session(authed_session)
+
+          [conn: conn, user: user]
+
+        _other ->
+          [conn: Phoenix.ConnTest.build_conn()]
+      end
+
+    {:ok, metadata}
   end
 end

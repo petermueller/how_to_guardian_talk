@@ -18,6 +18,16 @@ config :my_app, MyAppWeb.Endpoint,
   pubsub_server: MyApp.PubSub,
   live_view: [signing_salt: "f+BwS014"]
 
+config :my_app, MyAppWeb.Guardian,
+  issuer: "my_app",
+  secret_key: "Secret key. You can use `mix guardian.gen.secret` to get one"
+
+config :my_app, MyAppWeb.UserPipeline,
+  error_handler: MyAppWeb.SessionController,
+  module: MyAppWeb.Guardian
+
+# secret_key: "daHt+xTxEQZ4zLz+w04S2jz0spf0xXRT41yGdIgBSv1jYmqa0CCS/Q9IK3auo4lC"
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",

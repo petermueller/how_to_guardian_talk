@@ -1,0 +1,5 @@
+<%= f = form_for @conn, Routes.session_path(@conn, :create) %>
+  Email: <%= text_input f, :email %>
+  Password: <%= password_input f, :password %>
+  <%= submit "Submit" %>
+</form>

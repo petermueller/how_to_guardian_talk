@@ -13,6 +13,11 @@
       <section class="container">
         <nav role="navigation">
           <ul>
+            <%= if MyAppWeb.Guardian.Plug.current_resource(@conn) do %>
+              <li><%= link "Sign Out", to: Routes.session_path(@conn, :delete), method: :delete %></li>
+            <% else %>
+              <li><%= link "Sign In", to: Routes.session_path(@conn, :new) %></li>
+            <% end %>
             <li><a href="https://hexdocs.pm/phoenix/overview.html">Get Started</a></li>
             <%= if function_exported?(Routes, :live_dashboard_path, 2) do %>
               <li><%= link "LiveDashboard", to: Routes.live_dashboard_path(@conn, :home) %></li>
@@ -29,5 +34,12 @@
       <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
       <%= @inner_content %>
     </main>
+
+    <%= if @conn.params["debug"] do %>
+      <footer>
+        <p><%= inspect @conn.params %></p>
+        <p>User: <%= inspect MyAppWeb.Guardian.Plug.current_resource(@conn) %></p>
+      </footer>
+    <% end %>
   </body>
 </html>

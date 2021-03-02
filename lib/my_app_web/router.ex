@@ -7,6 +7,7 @@ defmodule MyAppWeb.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug MyAppWeb.UserPipeline
   end
 
   pipeline :api do
@@ -17,6 +18,10 @@ defmodule MyAppWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+
+    resources("/session", SessionController, singleton: true)
+
+    get "/debug", DebugController, :show
   end
 
   # Other scopes may use custom stacks.
