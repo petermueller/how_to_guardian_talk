@@ -70,7 +70,7 @@ defmodule MyAppWeb.ConnCase do
 
         :admin ->
           user = %MyApp.User{
-            id: "peters_uuid",
+            id: "admin_uuid",
             email: "admin@example.com",
             password_digest: "aasdfasdfasdfsdfsdf"
           }

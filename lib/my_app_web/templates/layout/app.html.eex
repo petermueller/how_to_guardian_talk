@@ -37,7 +37,7 @@
 
     <%= if @conn.params["debug"] do %>
       <footer>
-        <p><%= inspect @conn.params %></p>
+        <p><%= inspect @conn.private %></p>
         <p>User: <%= inspect MyAppWeb.Guardian.Plug.current_resource(@conn) %></p>
       </footer>
     <% end %>

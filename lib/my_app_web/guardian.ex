@@ -11,9 +11,7 @@ defmodule MyAppWeb.Guardian do
   end
 
   def resource_from_claims(claims) do
-    id =
-      claims["sub"]
-      |> IO.inspect()
+    id = claims["sub"]
 
     resource = MyApp.Accounts.get_user(id)
     {:ok, resource}

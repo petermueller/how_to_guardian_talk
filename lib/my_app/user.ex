@@ -4,5 +4,6 @@ defmodule MyApp.User do
   embedded_schema do
     field :email
     field :password_digest
+    field :is_admin, :boolean
   end
 end
